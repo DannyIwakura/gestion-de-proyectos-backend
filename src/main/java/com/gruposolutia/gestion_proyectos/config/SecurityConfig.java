@@ -2,43 +2,55 @@ package com.gruposolutia.gestion_proyectos.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.gruposolutia.gestion_proyectos.security.JwtFilter;
 
 @Configuration
 public class SecurityConfig {
-		
-	@Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            JwtFilter jwtFilter
+    ) throws Exception {
 
         http
-        	.cors(cors -> {})
+            .cors(cors -> {})
             .csrf(csrf -> csrf.disable())
+            .sessionManagement(session ->
+                    session.sessionCreationPolicy(
+                            SessionCreationPolicy.STATELESS
+                    )
+            )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                         "/",
                         "/login",
-                        "/api/public/**"
+                        "/api/public/**",
+                        "/api/auth/**"
                 ).permitAll()
-                // Solo ADMIN
+
                 .requestMatchers("/api/admin/**")
                 .hasRole("ADMIN")
 
-                // ADMIN o TECNICO
                 .requestMatchers("/api/tecnico/**")
                 .hasAnyRole("ADMIN", "TECNICO")
-                // Cualquier usuario autenticado
+
                 .anyRequest()
                 .authenticated()
             )
-            .httpBasic(Customizer.withDefaults());
+            .addFilterBefore(
+                    jwtFilter,
+                    UsernamePasswordAuthenticationFilter.class
+            );
 
         return http.build();
     }
@@ -47,33 +59,12 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
-	@Bean
-	public UserDetailsService userDetailsService(PasswordEncoder encoder) {
 
-		//Creamos usuarios en memoria
-	    UserDetails admin = User.builder()
-	            .username("admin")
-	            .password(encoder.encode("1234"))
-	            .roles("ADMIN")
-	            .build();
+    @Bean
+    public AuthenticationManager authenticationManager(
+            AuthenticationConfiguration config
+    ) throws Exception {
 
-	    UserDetails tecnico = User.builder()
-	            .username("tecnico")
-	            .password(encoder.encode("1234"))
-	            .roles("TECNICO")
-	            .build();
-
-	    UserDetails visitante = User.builder()
-	            .username("visitante")
-	            .password(encoder.encode("1234"))
-	            .roles("VISITANTE")
-	            .build();
-
-	    return new InMemoryUserDetailsManager(
-	            admin,
-	            tecnico,
-	            visitante
-	    );
-	}
+        return config.getAuthenticationManager();
+    }
 }

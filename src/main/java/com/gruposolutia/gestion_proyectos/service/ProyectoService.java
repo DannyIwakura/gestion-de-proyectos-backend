@@ -36,8 +36,63 @@ public class ProyectoService {
 						"Gestión de los clientes y facturas",
 						"Aplicación para controlar las relaciones con los clientes y las facturas",
 						EstadoProyecto.DESARROLLO,
-						List.of("Phyron", "Odoo","Postgres"))
-				);
+						List.of("Phyron", "Odoo","Postgres")),
+				new Proyecto(
+                        4L,
+                        "Gestión Clientes y Facturas",
+                        "CRM básico para clientes y facturación",
+                        EstadoProyecto.PRODUCCION,
+                        List.of("Python", "Odoo", "PostgreSQL")
+                ),
+
+                new Proyecto(
+                        5L,
+                        "Intranet Corporativa",
+                        "Portal interno de comunicación",
+                        EstadoProyecto.PRODUCCION,
+                        List.of("React", "Node.js", "MongoDB")
+                ),
+
+                new Proyecto(
+                        6L,
+                        "Sistema de Tickets",
+                        "Gestión de incidencias internas",
+                        EstadoProyecto.DESARROLLO,
+                        List.of("Vue", "Spring Boot", "PostgreSQL")
+                ),
+
+                new Proyecto(
+                        7L,
+                        "Dashboard de Analítica",
+                        "Visualización de KPIs empresariales",
+                        EstadoProyecto.DESARROLLO,
+                        List.of("Angular", "TypeScript", "Chart.js")
+                ),
+
+                new Proyecto(
+                        8L,
+                        "Plataforma eLearning",
+                        "Formación interna de empleados",
+                        EstadoProyecto.MANTENIMIENTO,
+                        List.of("Laravel", "MySQL", "Vue")
+                ),
+
+                new Proyecto(
+                        9L,
+                        "Sistema de Notificaciones",
+                        "Servicio de alertas internas",
+                        EstadoProyecto.PRODUCCION,
+                        List.of("Spring Boot", "Redis", "Kafka")
+                ),
+
+                new Proyecto(
+                        10L,
+                        "Gestor de Documentos",
+                        "Almacenamiento y control documental",
+                        EstadoProyecto.DESARROLLO,
+                        List.of("React", "AWS S3", "Node.js")
+                )
+		);
 	}
 
 }
